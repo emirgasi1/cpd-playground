@@ -48,9 +48,9 @@ export default function HomeScreen() {
             title="Try editing"
             hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
+          <HintRow title="New changes to Tool" hint={getDevMenuHint()} />
           <HintRow
-            title="Fresh start"
+            title="Something"
             hint={<ThemedText type="code">npm run reset-project</ThemedText>}
           />
         </ThemedView>
