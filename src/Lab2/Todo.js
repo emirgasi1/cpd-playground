@@ -1,22 +1,22 @@
 import { useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Text, View } from 'react-native';
+import AddTodo from './AddTodo';
+import FilterBar from './FilterBar';
 import { styles } from './styles';
+import TodoItem from './TodoItem';
 
 export default function Todo() {
   const [todos, setTodos] = useState([
     { id: '1', title: 'Install Expo Go', done: true },
     { id: '2', title: 'Finish Lab 2', done: false },
   ]);
-  const [text, setText] = useState('');
+  const [filter, setFilter] = useState('all');
 
-  const addTodo = () => {
-    const trimmed = text.trim();
-    if (trimmed === '') return;
+  const addTodo = (title) => {
     setTodos((prev) => [
       ...prev,
-      { id: Date.now().toString(), title: trimmed, done: false },
+      { id: Date.now().toString(), title, done: false },
     ]);
-    setText('');
   };
 
   const removeTodo = (id) => {
@@ -31,44 +31,32 @@ export default function Todo() {
 
   const left = todos.filter((t) => !t.done).length;
 
+  const visible = todos.filter((t) => {
+    if (filter === 'active') return !t.done;
+    if (filter === 'done') return t.done;
+    return true;
+  });
+
   return (
     <View style={styles.screen}>
       <Text style={styles.title}>{left} left</Text>
 
-      <View style={styles.row}>
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          placeholder="New task"
-          style={[styles.input, { flex: 1 }]}
-        />
-        <Pressable onPress={addTodo} style={styles.button}>
-          <Text style={styles.buttonText}>Add</Text>
-        </Pressable>
-      </View>
+      <AddTodo onAdd={addTodo} />
+
+      <FilterBar filter={filter} onChange={setFilter} />
 
       {todos.length === 0 ? (
         <Text style={styles.muted}>No tasks yet</Text>
+      ) : visible.length === 0 ? (
+        <Text style={styles.muted}>No tasks yet</Text>
       ) : (
-        todos.map((todo) => (
-          <View key={todo.id} style={styles.card}>
-            <View style={styles.row}>
-              <Pressable onPress={() => toggleTodo(todo.id)} style={{ flex: 1 }}>
-                <Text
-                  style={
-                    todo.done
-                      ? [styles.title, { textDecorationLine: 'line-through' }]
-                      : styles.title
-                  }
-                >
-                  {todo.title}
-                </Text>
-              </Pressable>
-              <Pressable onPress={() => removeTodo(todo.id)} style={styles.button}>
-                <Text style={styles.buttonText}>Delete</Text>
-              </Pressable>
-            </View>
-          </View>
+        visible.map((todo) => (
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            onToggle={toggleTodo}
+            onRemove={removeTodo}
+          />
         ))
       )}
     </View>
