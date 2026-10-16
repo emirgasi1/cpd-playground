@@ -1,1 +1,1 @@
-export { default } from '../Lab2/Cards.js';
+export { default } from '../Lab2/Counter.js';
